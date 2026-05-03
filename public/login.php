@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Регистрация — spbVkurse</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.10);
+      width: 100%;
+      max-width: 480px;
+      padding: 2.5rem 2rem;
+    }
+
+    .card__logo {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+    .card__logo span {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #1a73e8;
+      letter-spacing: -0.5px;
+    }
+    .card__logo span em {
+      font-style: normal;
+      color: #d93025;
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #202124;
+      margin-bottom: .35rem;
+    }
+    .subtitle {
+      font-size: .875rem;
+      color: #5f6368;
+      margin-bottom: 1.75rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+
+    label {
+      display: block;
+      font-size: .8125rem;
+      font-weight: 600;
+      color: #3c4043;
+      margin-bottom: .375rem;
+    }
+    label .required { color: #d93025; margin-left: 2px; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="url"],
+    select {
+      width: 100%;
+      padding: .6rem .85rem;
+      border: 1.5px solid #dadce0;
+      border-radius: 8px;
+      font-size: .9375rem;
+      color: #202124;
+      background: #fff;
+      transition: border-color .15s, box-shadow .15s;
+      outline: none;
+      appearance: none;
+    }
+    input:focus, select:focus {
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 3px rgba(26,115,232,.15);
+    }
+    input.error, select.error {
+      border-color: #d93025;
+    }
+
+    .hint {
+      font-size: .75rem;
+      color: #80868b;
+      margin-top: .3rem;
+    }
+    .error-msg {
+      font-size: .75rem;
+      color: #d93025;
+      margin-top: .3rem;
+      display: none;
+    }
+    .error-msg.visible { display: block; }
+
+    .avatar-preview-wrap {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-top: .5rem;
+    }
+    .avatar-preview {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #dadce0;
+      display: none;
+    }
+
+    .password-wrap { position: relative; }
+    .toggle-pw {
+      position: absolute;
+      right: .75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #5f6368;
+      padding: 0;
+      line-height: 1;
+      font-size: 1.1rem;
+    }
+
+    .strength-bar {
+      height: 4px;
+      border-radius: 4px;
+      background: #e8eaed;
+      margin-top: .45rem;
+      overflow: hidden;
+    }
+    .strength-fill {
+      height: 100%;
+      border-radius: 4px;
+      width: 0;
+      transition: width .3s, background .3s;
+    }
+    .strength-label {
+      font-size: .72rem;
+      color: #5f6368;
+      margin-top: .25rem;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .6rem;
+      margin-top: .3rem;
+    }
+    .role-option {
+      position: relative;
+    }
+    .role-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0; height: 0;
+    }
+    .role-option label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .3rem;
+      padding: .75rem .5rem;
+      border: 1.5px solid #dadce0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: .8125rem;
+      font-weight: 500;
+      color: #5f6368;
+      text-align: center;
+      transition: border-color .15s, background .15s;
+    }
+    .role-option label .icon { font-size: 1.4rem; }
+    .role-option input:checked + label {
+      border-color: #1a73e8;
+      background: #e8f0fe;
+      color: #1a73e8;
+    }
+
+    .terms {
+      display: flex;
+      gap: .6rem;
+      align-items: flex-start;
+      margin: 1.2rem 0;
+    }
+    .terms input[type="checkbox"] {
+      margin-top: .15rem;
+      flex-shrink: 0;
+      width: 16px; height: 16px;
+      accent-color: #1a73e8;
+      cursor: pointer;
+    }
+    .terms span {
+      font-size: .8125rem;
+      color: #5f6368;
+      line-height: 1.4;
+    }
+    .terms a { color: #1a73e8; text-decoration: none; }
+    .terms a:hover { text-decoration: underline; }
+
+    .btn-submit {
+      width: 100%;
+      padding: .75rem;
+      background: #1a73e8;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+    }
+    .btn-submit:hover { background: #1558b0; }
+    .btn-submit:active { transform: scale(.98); }
+    .btn-submit:disabled { background: #bdc1c6; cursor: not-allowed; }
+
+    .login-link {
+      text-align: center;
+      font-size: .8125rem;
+      color: #5f6368;
+      margin-top: 1.25rem;
+    }
+    .login-link a { color: #1a73e8; text-decoration: none; font-weight: 600; }
+    .login-link a:hover { text-decoration: underline; }
+
+    .response-banner {
+      display: none;
+      background: #e6f4ea;
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: .9rem;
+      margin-bottom: 1.2rem;
+      text-align: center;
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      transition: transform 0.3s linear;
+      transform: translate(110%, 0px);
+    }
+    .response-banner.success{
+      border: 1px solid #34a853;
+      color: #137333;
+      transform: translate(0%, 0%);
+    }
+    .response-banner.success::after{
+      content: '';
+    }
+    .response-banner.fail{
+      border: 1px solid #a83434ff;
+      color: #731313ff;
+    }
+    .response-banner.visible { display: block; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="card__logo"><span>spb<em>Vkurse</em></span></div>
+
+  <h1>Создать аккаунт</h1>
+  <p class="subtitle">Заполните форму, чтобы начать читать новости</p>
+
+  <div class="response-banner alert" id="responseBanner">
+    
+  </div>
+
+  <form id="registerForm" novalidate>
+
+    <!-- Full Name -->
+    <div class="form-group">
+      <label for="full_name">Полное имя <span class="required">*</span></label>
+      <input type="text" id="full_name" name="full_name"
+             placeholder="Иван Иванов" maxlength="100" autocomplete="name" />
+      <div class="error-msg" id="err_full_name">Введите ваше полное имя</div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label for="email">Электронная почта <span class="required">*</span></label>
+      <input type="email" id="email" name="email"
+             placeholder="ivan@example.com" maxlength="255" autocomplete="email" />
+      <div class="error-msg" id="err_email">Введите корректный email-адрес</div>
+    </div>
+
+    <!-- Password -->
+    <div class="form-group">
+      <label for="password">Пароль <span class="required">*</span></label>
+      <div class="password-wrap">
+        <input type="password" id="password" name="password"
+               placeholder="Минимум 8 символов" autocomplete="new-password" />
+        <button type="button" class="toggle-pw" aria-label="Показать пароль"
+                onclick="togglePw('password', this)"><i class="fa-solid fa-eye"></i></button>
+      </div>
+      <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+      <div class="strength-label" id="strengthLabel"></div>
+      <div class="error-msg" id="err_password">Пароль должен содержать минимум 8 символов</div>
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="form-group">
+      <label for="password_confirm">Подтверждение пароля <span class="required">*</span></label>
+      <div class="password-wrap">
+        <input type="password" id="password_confirm" name="password_confirm"
+               placeholder="Повторите пароль" autocomplete="new-password" />
+        <button type="button" class="toggle-pw" aria-label="Показать пароль"
+                onclick="togglePw('password_confirm', this)"><i class="fa-solid fa-eye"></i></button>
+      </div>
+      <div class="error-msg" id="err_password_confirm">Пароли не совпадают</div>
+    </div>
+
+    <!-- Role -->
+    <div class="form-group">
+      <label>Роль на платформе <span class="required">*</span></label>
+      <div class="role-grid">
+        <div class="role-option">
+          <input type="radio" id="role_reader" name="role" value="reader" checked />
+          <label for="role_reader">
+            <span class="icon"><i class="fa-solid fa-user"></i></span>
+            Читатель
+          </label>
+        </div>
+        <div class="role-option">
+          <input type="radio" id="role_author" name="role" value="author" />
+          <label for="role_author">
+            <span class="icon">✍️</span>
+            Автор
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avatar URL -->
+    <div class="form-group">
+      <label for="avatar_url">Ссылка на аватар <span style="color:#80868b;font-weight:400">(необязательно)</span></label>
+      <input type="url" id="avatar_url" name="avatar_url"
+             placeholder="https://example.com/avatar.png" />
+      <div class="avatar-preview-wrap">
+        <img id="avatarPreview" class="avatar-preview" src="" alt="Предпросмотр" />
+      </div>
+      <div class="hint">Вставьте прямую ссылку на изображение</div>
+      <div class="error-msg" id="err_avatar_url">Введите корректный URL</div>
+    </div>
+
+    <!-- Terms -->
+    <div class="terms">
+      <input type="checkbox" id="agree_terms" name="agree_terms" />
+      <span>Я принимаю <a href="#">Пользовательское соглашение</a> и
+            <a href="#">Политику конфиденциальности</a> <span class="required">*</span></span>
+    </div>
+    <div class="error-msg" id="err_terms" style="margin-top:-.7rem;margin-bottom:.6rem">
+      Необходимо принять условия использования
+    </div>
+
+    <button type="submit" class="btn-submit" id="submitBtn">Зарегистрироваться</button>
+  </form>
+
+  <p class="login-link"><span class="login-link-text">Уже есть аккаунт?</span> <a href="#" class="form-type-toggler">Войти</a></p>
+</div>
+
+<script>
+  /* ---- Password toggle ---- */
+  function togglePw(id, btn) {
+    const inp = document.getElementById(id);
+    if (inp.type === 'password') { inp.type = 'text';  btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i>'; }
+    else                         { inp.type = 'password'; btn.innerHTML = '<i class="fa-solid fa-eye"></i>'; }
+  }
+
+  let loginLink = document.querySelector('.login-link');
+  let formTypeToggler = loginLink.querySelector('.form-type-toggler');
+  let submitButton = document.querySelector("#submitBtn");
+  let formType = 'register';
+  /* ------ change form UI ------ */
+  function changeFormUI(formType){
+    let passwdConfirmField = Array.from(document.querySelectorAll('.form-group'))
+                            .find(g => {
+                              return g.querySelector('#password_confirm');
+                            });
+
+    if(formType === 'login'){
+      passwdConfirmField.style.removeProperty('display');
+      loginLink.querySelector('.login-link-text').textContent = 'Уже есть аккаунт?';
+      formTypeToggler.textContent = 'Войти';
+      formType = 'register';
+      submitButton.textContent = 'Зарегистрироваться';
+    } else {
+      passwdConfirmField.style.setProperty('display', 'none');
+      loginLink.querySelector('.login-link-text').textContent = 'Нет Аккаунта?';
+      formTypeToggler.textContent = 'Зарегистрироваться';
+      formType = 'login';
+      submitButton.textContent = 'Логин';
+      resetStrengthFill();
+    }
+    return formType;
+  }
+
+  function resetStrengthFill(){
+    document.getElementById('strengthFill').style.width = '0';
+    document.getElementById('strengthLabel').textContent = '';
+  }
+  
+  formTypeToggler.addEventListener('click', function(){
+    formType = changeFormUI(formType);
+  });
+
+  /* ---- initialise form ---- */
+  formType = changeFormUI(formType);
+
+  /* ---- Password strength ---- */
+  document.getElementById('password').addEventListener('input', function () {
+    if(formType === 'login'){
+      return;
+    }
+    const v = this.value;
+    const fill  = document.getElementById('strengthFill');
+    const label = document.getElementById('strengthLabel');
+    let score = 0;
+    if (v.length >= 8)              score++;
+    if (v.length >= 12)             score++;
+    if (/[A-Z]/.test(v))            score++;
+    if (/[0-9]/.test(v))            score++;
+    if (/[^A-Za-z0-9]/.test(v))     score++;
+
+    const levels = [
+      { w: '0%',   bg: 'transparent', text: '' },
+      { w: '25%',  bg: '#d93025', text: 'Очень слабый' },
+      { w: '50%',  bg: '#f9ab00', text: 'Слабый' },
+      { w: '75%',  bg: '#fbbc04', text: 'Средний' },
+      { w: '90%',  bg: '#34a853', text: 'Хороший' },
+      { w: '100%', bg: '#0f9d58', text: 'Отличный' },
+    ];
+    const l = levels[Math.min(score, 5)];
+    fill.style.width = l.w;
+    fill.style.background = l.bg;
+    label.textContent = l.text;
+    label.style.color = l.bg;
+  });
+
+  function removeAlerts(){
+    return new Promise(res => {
+      setTimeout(()=>{
+        document.querySelectorAll('.alert').forEach(al => al.remove());
+        res(true);
+      }, 5000);
+    });
+  }
+
+  /* ---- Avatar preview ---- */
+  document.getElementById('avatar_url').addEventListener('input', function () {
+    const preview = document.getElementById('avatarPreview');
+    const url = this.value.trim();
+    if (url) {
+      preview.src = url;
+      preview.style.display = 'block';
+      preview.onerror = () => { preview.style.display = 'none'; };
+    } else {
+      preview.style.display = 'none';
+    }
+  });
+
+  /* ---- Validation helpers ---- */
+  function showError(id, show) {
+    const el = document.getElementById('err_' + id);
+    if (el) el.classList.toggle('visible', show);
+    const inp = document.getElementById(id);
+    if (inp) inp.classList.toggle('error', show);
+    return !show;
+  }
+
+  function isValidEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  }
+  function isValidUrl(v) {
+    try { new URL(v); return true; } catch { return false; }
+  }
+
+  /* ---- Form submit ---- */
+  document.getElementById('registerForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    let ok = true;
+
+    const fullName = document.getElementById('full_name').value.trim();
+    ok &= showError('full_name', fullName.length < 2);
+
+    const email = document.getElementById('email').value.trim();
+    ok &= showError('email', !isValidEmail(email));
+
+    const pw  = document.getElementById('password').value;
+    ok &= ((formType === 'login') || showError('password', pw.length < 8));
+
+    const pw2 = document.getElementById('password_confirm').value;
+    ok &= ((formType === 'login') || showError('password_confirm', pw !== pw2 || pw2 === ''));
+
+    const avatarUrl = document.getElementById('avatar_url').value.trim();
+    const avatarBad = avatarUrl !== '' && !isValidUrl(avatarUrl);
+    ok &= showError('avatar_url', avatarBad);
+
+    const terms = document.getElementById('agree_terms').checked;
+    const termsErr = document.getElementById('err_terms');
+    termsErr.classList.toggle('visible', !terms);
+    ok &= terms;
+
+    if (!ok) return;
+
+    const role = document.querySelector('input[name="role"]:checked').value;
+
+    /* Build payload (mirrors users table columns) */
+    const payload = {
+      full_name:   fullName,
+      email:       email,
+      password:    pw,           // backend must hash this → password_hash
+      role:        role,
+      avatar_url:  avatarUrl || null,
+    };
+    let formData = new FormData();
+    for(const [k,v] of Object.entries(payload)){
+      formData.append(k,v);
+    }
+
+    //console.log('Registration payload:', payload);
+    let url = formType === 'login' ? '/vkurse/auth/login' : '/vkurse/auth/register'
+    let btnText = submitButton.textContent;
+    submitButton.innerHtml = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+    let response = await fetch(url, {
+      method: 'POST',
+      body: formData
+    });
+    try{
+      let data = await response.json();
+      console.log(data);
+      let rb = document.getElementById('responseBanner');
+      if(data.success){
+        rb.innerHTML = `<span>${data.message}</span>`;
+        rb.classList.add('visible','success');
+
+        await removeAlerts();
+        if(formType === 'login'){
+          location.href = '/vkurse/user/me';
+        }
+      } else {
+        rb.innerHTML = `<span>${data.message ?? 'Registration failed'}</span>`;
+        rb.classList.add('visible','fail');
+      }
+
+      //submitButton.disabled = true;
+      submitButton.textContent = btnText;
+      //this.reset();
+      document.getElementById('avatarPreview').style.display = 'none';
+      //resetStrengthFill();
+      
+    }catch(err){
+      console.log('authentication error: ' + e.message);
+    }
+  });
+</script>
+</body>
+</html>
