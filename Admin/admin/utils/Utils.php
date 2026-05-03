@@ -3,6 +3,9 @@ namespace Thunderpc\Vkurse\Admin\Utils;
 require_once __DIR__ . '/../../../config/config.php';
 
 use Thunderpc\Vkurse\Admin\Utils\FileUploader;
+use Thunderpc\Vkurse\Admin\Utils\Log;
+
+Log::init();
 
 class Utils{
     
@@ -36,12 +39,23 @@ class Utils{
     }
 
     public function upload($upload_dir, $types, $file){
-        $this->uploader = new FileUploader($upload_dir, $types);
-        return $this->uploader->upload($file);
+        try {
+            $uploader = new FileUploader($upload_dir, $types);
+            return $uploader->upload($file);
+        } catch(\Exception $e){
+            Log::error("Error during upload: {$e->getMessage()}");
+        }
+        return [];
+    }
+
+    public function deleteFile($path, $type="url"){
+        Log::info("deleting file $path");
+        $uploader = new FileUploader();
+        $uploader->delete_file($path, $type);
     }
     
     public function sendOSPushNotification($title, $content, $url){
-        error_log('sending notifications about ' . $title);
+        Log::info('sending notifications about ' . $title);
         $api_key = OS_APP_API_KEY;
         $app_id = OS_PN_APP_ID;
         $base_url = 'https://konektem.net' . $url;
@@ -72,12 +86,12 @@ class Utils{
         error_log("original response: " . $response);
         curl_close($ch);
         $response = json_decode($response. true);
-        error_log("json response: " . $response);
+        Log::info("json response: " . $response);
 
         if($response['error']){
-            error_log('OS_notifications failed');
+            Log::error('OS_notifications failed');
         } else {
-            error_log('OS_notifications sent successfully');
+            Log::info('OS_notifications sent successfully');
         }
     }
 
