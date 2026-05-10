@@ -1,3 +1,0 @@
-- update last sync at after refreshing external news from source
-- new attributes for author: articles_count, subscriptions_count
-- auto_renew field on subscriptions
