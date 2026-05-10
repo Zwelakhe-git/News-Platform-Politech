@@ -1,0 +1,35 @@
+:root {
+  --box-width: 100%;
+  --box-head-h: 30px;
+}
+
+.box,.box-wrap {
+  background: var(--box-bg-color);
+}
+
+.box-content {
+  border-radius: inherit;
+}
+.box-content > div {
+  padding: 6px;
+}
+.box-content__head {
+  height: var(--box-head-h);
+  background: var(--box-header-color);
+  border-radius: 9px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+.box-content__head--bar {
+  display: flex;
+  justify-content: space-between;
+}
+.box-content__body {
+  text-align: center;
+  border-radius: 0px;
+}
+.box-content__footer {
+  border-radius: 9px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}

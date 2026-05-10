@@ -1,0 +1,13 @@
+/*
+* scrollbar
+*/
+body *::-webkit-scrollbar {
+  display: none;
+}
+body **::-webkit-scrollbar-track {
+  background: transparent;
+}
+body **::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #555;
+}

@@ -1,0 +1,52 @@
+
+/* tool bars */
+.tox .tox-menubar,
+.tox .tox-toolbar-overlord .tox-toolbar__primary,
+.tox .tox-statusbar,
+.tox.tox-tinymce-aux .tox-toolbar__overflow{
+    background-color: var(--page-bg);
+    color: var(--text);
+}
+
+.tox .tox-menubar *,
+.tox .tox-toolbar-overlord .tox-toolbar__primary *,
+.tox .tox-statusbar *{
+    color: var(--text) !important;
+    fill: var(--text) !important;
+}
+
+.tox .tox-mbtn--active {
+    background: #a6ccf7;
+    border: 0;
+    box-shadow: none;
+    color: #222f3e
+}
+
+.tox .tox-mbtn:hover:not(:disabled):not(.tox-mbtn--active) {
+    background: #cce2fa;
+    border: 0;
+    box-shadow: none;
+    color: #222f3e
+}
+
+/* icons */
+.tox .tox-tbtn:hover {
+    background: #d80f0f;
+    border: 0;
+    box-shadow: none;
+    color: #222f3e
+}
+
+.tox .tox-tbtn:hover svg {
+    fill: #222f3e
+}
+/* active icons */
+.tox .tox-tbtn--enabled,.tox .tox-tbtn--enabled:hover {
+    background: #ed0101;
+    border: 0;
+    box-shadow: none;
+    color: #222f3e
+}
+
+/* pop up menus */
+.tox .tox-menu{}
