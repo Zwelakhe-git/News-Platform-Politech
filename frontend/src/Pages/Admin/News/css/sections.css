@@ -1,0 +1,10 @@
+.section {
+  padding: 0px 25px;
+}
+.section-info {
+  margin-bottom: 2.25rem;
+}
+.section-nav.right {
+  justify-content: flex-end;
+  align-items: center;
+}

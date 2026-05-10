@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Чеклист реализации — Новостная платформа</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 20px;
+            color: #0f172a;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 24px 28px;
+            border-radius: 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.8rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header p {
+            margin: 0;
+            opacity: 0.8;
+            font-size: 0.95rem;
+        }
+
+        .stats {
+            background: white;
+            border-radius: 20px;
+            padding: 16px 24px;
+            margin-bottom: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .stats-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            row-gap: 12px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border-radius: 40px;
+            padding: 6px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat-card strong {
+            color: #3b82f6;
+            font-size: 1.2rem;
+            margin-right: 6px;
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar-bg {
+            background: #e2e8f0;
+            border-radius: 40px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #3b82f6;
+            width: 0%;
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.2s ease;
+        }
+
+        .reset-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+            color: #1e293b;
+        }
+
+        .reset-btn:hover {
+            background: #e2e8f0;
+            border-color: #94a3b8;
+        }
+
+        /* Аккордеон BR */
+        .br-section {
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .br-header {
+            background: #ffffff;
+            padding: 18px 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid transparent;
+            transition: background 0.1s;
+            user-select: none;
+        }
+
+        .br-header:hover {
+            background: #fafcff;
+        }
+
+        .br-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .br-code {
+            background: #eef2ff;
+            color: #1e40af;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        .br-progress {
+            font-size: 0.75rem;
+            background: #f1f5f9;
+            padding: 4px 10px;
+            border-radius: 40px;
+            color: #334155;
+        }
+
+        .toggle-icon {
+            font-size: 1.3rem;
+            color: #64748b;
+        }
+
+        .br-content {
+            display: none;
+            padding: 0;
+            border-top: 1px solid #eef2ff;
+        }
+
+        .br-content.open {
+            display: block;
+        }
+
+        /* Таблица */
+        .fr-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .fr-table th {
+            text-align: left;
+            padding: 14px 16px;
+            background: #f8fafc;
+            font-weight: 600;
+            color: #334155;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .fr-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f2f5;
+            vertical-align: top;
+            color: #1e293b;
+        }
+
+        .fr-table tr:hover td {
+            background: #fefce8;
+        }
+
+        .checkbox-cell {
+            width: 48px;
+            text-align: center;
+        }
+
+        .checkbox-cell input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #3b82f6;
+        }
+
+        .fr-text {
+            line-height: 1.4;
+        }
+
+        .note-text {
+            font-size: 0.7rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        /* footer */
+        .footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 0.75rem;
+            color: #64748b;
+            padding: 16px;
+        }
+
+        @media (max-width: 750px) {
+            body {
+                padding: 12px;
+            }
+            .fr-table th, .fr-table td {
+                padding: 10px 10px;
+            }
+            .fr-text {
+                font-size: 0.8rem;
+            }
+            .br-header {
+                padding: 14px 18px;
+            }
+            .stats {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📋 Новостная платформа</h1>
+        <p>Чеклист реализации — 50 функциональных требований (FR) по 8 бизнес-требованиям (BR)</p>
+    </div>
+
+    <div class="stats" id="statsPanel">
+        <div class="stats-grid" id="statsNumbers"></div>
+        <div class="progress-bar-container">
+            <div class="progress-label">ОБЩИЙ ПРОГРЕСС</div>
+            <div class="progress-bar-bg"><div class="progress-fill" id="globalFill"></div></div>
+        </div>
+        <button class="reset-btn" id="resetAllBtn">🗲 Сбросить всё</button>
+    </div>
+
+    <div id="checklistRoot"></div>
+    <div class="footer">
+        ✅ Отмечайте выполненные задачи — прогресс обновляется автоматически. Данные сохраняются в localStorage.
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // Структура: BR → список FR
+    // --------------------------------------------------------------
+    const checklistData = [
+        {
+            brCode: "BR-01",
+            brTitle: "Регистрация и учетные записи",
+            requirements: [
+                "Регистрация по email/паролю",
+                "Регистрация через OAuth (Google/GitHub)",
+                "Вход в учетную запись",
+                "Восстановление пароля",
+                "Редактирование профиля (имя, аватар)",
+                "История платежей в личном кабинете",
+                "Статус подписки в личном кабинете"
+            ]
+        },
+        {
+            brCode: "BR-02",
+            brTitle: "Монетизация через подписку (роль «Автор»)",
+            requirements: [
+                "Просмотр тарифов подписки (месяц/год)",
+                "Выбор тарифа и переход к оплате",
+                "Оплата через Visa",
+                "Оплата через Apple Pay",
+                "Оплата через PayPal",
+                "Отображение даты окончания подписки",
+                "Возможность продлить подписку"
+            ]
+        },
+        {
+            brCode: "BR-03",
+            brTitle: "Админ-инструменты управления",
+            requirements: [
+                "Просмотр списка пользователей с ролями",
+                "Фильтрация пользователей по роли",
+                "Блокировка/разблокировка пользователя",
+                "Назначение роли вручную (опционально)"
+            ]
+        },
+        {
+            brCode: "BR-04",
+            brTitle: "Пользовательский контент (UGC) — роль «Автор»",
+            requirements: [
+                "WYSIWYG редактор статей",
+                "Загрузка изображений к статье",
+                "Превью изображений перед загрузкой",
+                "Выбор категории для статьи",
+                "Добавление тегов к статье",
+                "Сохранение черновиков",
+                "Публикация статьи (отправка на модерацию)"
+            ]
+        },
+        {
+            brCode: "BR-05",
+            brTitle: "Контроль качества контента (модерация)",
+            requirements: [
+                "Очередь статей на модерацию",
+                //"Просмотр полного текста статьи (для модератора)",
+                //"Одобрение статьи",
+                //"Отклонение статьи с указанием причины",
+                "Уведомление автору о результате модерации"
+            ]
+        },
+        {
+            brCode: "BR-06",
+            brTitle: "Агрегация мировых новостей",
+            requirements: [
+                "Загрузка новостей из NewsAPI",
+                //"Загрузка новостей из GNews API",
+                "Парсинг RSS-лент",
+                "Нормализация данных в единый формат",
+                "Дедупликация по заголовку + источнику",
+                "Дедупликация по хешу заголовка",
+                "Объединение внутренних и внешних статей в ленте"
+            ]
+        },
+        {
+            brCode: "BR-07",
+            brTitle: "Удобное потребление новостей",
+            requirements: [
+                "Лента новостей (бесконечная прокрутка)",
+                "Лента новостей (пагинация)",
+                "Фильтрация по категориям",
+                "Фильтрация по источнику (внутренние/внешние)",
+                "Полнотекстовый поиск по ключевым словам",
+                "Сортировка результатов поиска"
+            ]
+        },
+        {
+            brCode: "BR-08",
+            brTitle: "Удержание аудитории и персонализация",
+            requirements: [
+                "Подписка на любимых авторов",
+                "Отображение подписанных авторов в профиле",
+                "Push-уведомления о новых статьях от подписанных авторов",
+                "Настройка формата уведомлений (push/email)",
+                "Ежедневный дайджест главных новостей на email",
+                "Еженедельный дайджест (опционально)",
+                "Возможность отписаться от дайджеста"
+            ]
+        }
+    ];
+
+    // Генерация ID для каждого FR: brCode + index
+    let allFrIds = [];
+    checklistData.forEach((br, brIdx) => {
+        br.requirements.forEach((req, reqIdx) => {
+            const id = `${br.brCode}_${reqIdx}`;
+            allFrIds.push(id);
+        });
+    });
+
+    // Загрузка состояния из localStorage
+    function loadState() {
+        const stored = localStorage.getItem("news_platform_checklist");
+        if (!stored) return {};
+        try {
+            return JSON.parse(stored);
+        } catch(e) { return {}; }
+    }
+
+    function saveState(state) {
+        localStorage.setItem("news_platform_checklist", JSON.stringify(state));
+    }
+
+    // Рендер всей страницы
+    function render() {
+        const state = loadState();
+        const root = document.getElementById("checklistRoot");
+        if (!root) return;
+
+        let html = "";
+        for (let brIdx = 0; brIdx < checklistData.length; brIdx++) {
+            const br = checklistData[brIdx];
+            const brId = `br_${br.brCode}`;
+            let completedInBr = 0;
+            const brReqs = br.requirements;
+            const reqStatuses = [];
+            for (let reqIdx = 0; reqIdx < brReqs.length; reqIdx++) {
+                const id = `${br.brCode}_${reqIdx}`;
+                const isChecked = state[id] === true;
+                if (isChecked) completedInBr++;
+                reqStatuses.push({ id, text: brReqs[reqIdx], checked: isChecked });
+            }
+            const totalBr = brReqs.length;
+            const percentBr = totalBr === 0 ? 0 : Math.round((completedInBr / totalBr) * 100);
+            const progressText = `${completedInBr}/${totalBr} (${percentBr}%)`;
+
+            html += `
+                <div class="br-section">
+                    <div class="br-header" data-br-id="${brId}">
+                        <div class="br-title">
+                            <span class="br-code">${br.brCode}</span>
+                            <span>${br.brTitle}</span>
+                            <span class="br-progress">${progressText}</span>
+                        </div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+                    <div class="br-content" id="${brId}">
+                        <table class="fr-table">
+                            <thead>
+                                <tr><th style="width:50px"></th><th>Функциональное требование</th></tr>
+                            </thead>
+                            <tbody>
+            `;
+            for (let i = 0; i < reqStatuses.length; i++) {
+                const r = reqStatuses[i];
+                html += `
+                    <tr>
+                        <td class="checkbox-cell"><input type="checkbox" data-id="${r.id}" ${r.checked ? "checked" : ""}></td>
+                        <td class="fr-text">${escapeHtml(r.text)}</td>
+                    </tr>
+                `;
+            }
+            html += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+        root.innerHTML = html;
+
+        // Обновляем общую статистику и прогресс-бар
+        updateGlobalStats();
+        attachCheckboxEvents();
+        attachAccordionEvents();
+    }
+
+    function updateGlobalStats() {
+        const state = loadState();
+        let totalChecked = 0;
+        for (let id of allFrIds) {
+            if (state[id] === true) totalChecked++;
+        }
+        const totalCount = allFrIds.length;
+        const percentTotal = totalCount === 0 ? 0 : Math.round((totalChecked / totalCount) * 100);
+        const fillEl = document.getElementById("globalFill");
+        if (fillEl) fillEl.style.width = percentTotal + "%";
+
+        const statsContainer = document.getElementById("statsNumbers");
+        if (statsContainer) {
+            statsContainer.innerHTML = `
+                <div class="stat-card"><strong>${totalCount}</strong> всего FR</div>
+                <div class="stat-card"><strong>${totalChecked}</strong> выполнено</div>
+                <div class="stat-card"><strong>${totalCount - totalChecked}</strong> осталось</div>
+                <div class="stat-card"><strong>${percentTotal}%</strong> готово</div>
+            `;
+        }
+
+        // Обновляем прогресс каждого BR в заголовках
+        for (let br of checklistData) {
+            let completed = 0;
+            let total = br.requirements.length;
+            for (let idx = 0; idx < total; idx++) {
+                const id = `${br.brCode}_${idx}`;
+                if (state[id] === true) completed++;
+            }
+            const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+            const progressSpan = document.querySelector(`.br-section .br-header[data-br-id="br_${br.brCode}"] .br-progress`);
+            if (progressSpan) {
+                progressSpan.innerText = `${completed}/${total} (${percent}%)`;
+            }
+        }
+    }
+
+    function attachCheckboxEvents() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"][data-id]');
+        checkboxes.forEach(cb => {
+            cb.removeEventListener("change", handleCheckboxChange);
+            cb.addEventListener("change", handleCheckboxChange);
+        });
+    }
+
+    function handleCheckboxChange(e) {
+        const cb = e.target;
+        const id = cb.getAttribute("data-id");
+        if (!id) return;
+        const state = loadState();
+        state[id] = cb.checked;
+        saveState(state);
+        updateGlobalStats();
+
+        // дополнительно обновляем текст прогресса в текущем BR
+        const brCode = id.split("_")[0];
+        let completed = 0;
+        let total = 0;
+        const currentBr = checklistData.find(br => br.brCode === brCode);
+        if (currentBr) {
+            total = currentBr.requirements.length;
+            for (let i = 0; i < total; i++) {
+                const fid = `${brCode}_${i}`;
+                if (loadState()[fid] === true) completed++;
+            }
+            const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+            const progressSpan = document.querySelector(`.br-section .br-header[data-br-id="br_${brCode}"] .br-progress`);
+            if (progressSpan) progressSpan.innerText = `${completed}/${total} (${percent}%)`;
+        }
+    }
+
+    function attachAccordionEvents() {
+        const headers = document.querySelectorAll('.br-header');
+        headers.forEach(header => {
+            header.removeEventListener("click", headerClickHandler);
+            header.addEventListener("click", headerClickHandler);
+        });
+    }
+
+    function headerClickHandler(e) {
+        const header = e.currentTarget;
+        const brId = header.getAttribute("data-br-id");
+        if (!brId) return;
+        const content = document.getElementById(brId);
+        if (content) {
+            content.classList.toggle("open");
+            const icon = header.querySelector('.toggle-icon');
+            if (icon) {
+                icon.textContent = content.classList.contains("open") ? "▲" : "▼";
+            }
+        }
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // Сброс всех чекбоксов
+    function resetAll() {
+        const emptyState = {};
+        for (let id of allFrIds) {
+            emptyState[id] = false;
+        }
+        saveState(emptyState);
+        render();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        render();
+        const resetBtn = document.getElementById("resetAllBtn");
+        if (resetBtn) resetBtn.addEventListener("click", resetAll);
+    });
+</script>
+</body>
+</html>

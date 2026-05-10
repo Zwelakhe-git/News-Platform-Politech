@@ -1,0 +1,1142 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Профиль — Politech News</title>
+    <style>
+      :root {
+        --bg: #0d0f14;
+        --surface: #151820;
+        --surface2: #1c2030;
+        --border: rgba(255, 255, 255, 0.07);
+        --accent: #7c6af7;
+        --accent2: #a78bfa;
+        --text: #e8eaf0;
+        --muted: #6b7280;
+        --green: #34d399;
+        --red: #f87171;
+        --yellow: #fbbf24;
+      }
+      ul{
+        list-style-type: none;
+        margin: 0px;
+        padding: 0px;
+      }
+      li{
+        padding: 0px;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+      }
+
+      /* ── Navbar ── */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 32px;
+        height: 60px;
+        background: rgba(13, 15, 20, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .navbar__logo {
+        font-size: 1.15rem;
+        font-weight: 800;
+        letter-spacing: -0.4px;
+      }
+
+      .navbar__logo span {
+        color: var(--accent2);
+      }
+
+      .navbar__right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .navbar__back {
+        font-size: 0.8rem;
+        color: var(--muted);
+        text-decoration: none;
+        padding: 6px 14px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition:
+          border-color 0.15s,
+          color 0.15s;
+      }
+
+      .navbar__back:hover {
+        color: var(--text);
+        border-color: var(--accent);
+      }
+
+      .avatar-sm {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), #ec4899);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+        cursor: pointer;
+        border: 2px solid var(--border);
+      }
+
+      /* ── Demo switcher ── */
+      .demo-bar {
+        background: rgba(124, 106, 247, 0.1);
+        border-bottom: 1px solid rgba(124, 106, 247, 0.2);
+        padding: 10px 32px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        font-size: 0.78rem;
+        color: var(--muted);
+      }
+
+      .demo-bar strong {
+        color: var(--accent2);
+      }
+
+      .demo-btn {
+        padding: 4px 12px;
+        border-radius: 20px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 0.78rem;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+
+      .demo-btn.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #fff;
+      }
+
+      .demo-btn:hover:not(.active) {
+        border-color: var(--accent);
+      }
+
+      /* ── Main layout ── */
+      .main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 24px 80px;
+      }
+
+      /* ── Profile hero ── */
+      .hero {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 28px 32px;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(
+          circle,
+          rgba(124, 106, 247, 0.15),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      .hero__avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        background: linear-gradient(135deg, var(--accent), #ec4899);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        font-weight: 800;
+        border: 3px solid var(--border);
+      }
+
+      .hero__info {
+        flex: 1;
+      }
+
+      .hero__name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .hero__email {
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+
+      .hero__badges {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge--reader {
+        background: rgba(52, 211, 153, 0.12);
+        color: var(--green);
+        border: 1px solid rgba(52, 211, 153, 0.2);
+      }
+
+      .badge--author {
+        background: rgba(124, 106, 247, 0.15);
+        color: var(--accent2);
+        border: 1px solid rgba(124, 106, 247, 0.25);
+      }
+
+      .badge--sub {
+        background: rgba(251, 191, 36, 0.1);
+        color: var(--yellow);
+        border: 1px solid rgba(251, 191, 36, 0.2);
+      }
+
+      .badge--blocked {
+        background: rgba(248, 113, 113, 0.12);
+        color: var(--red);
+        border: 1px solid rgba(248, 113, 113, 0.2);
+      }
+
+      .hero__actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .btn-outline {
+        padding: 8px 18px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text);
+        font-size: 0.83rem;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+        white-space: nowrap;
+      }
+
+      .btn-outline:hover {
+        background: var(--surface2);
+        border-color: var(--accent);
+      }
+
+      /* ── Top cards ── */
+      .section-title {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 14px;
+      }
+
+      .top-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 14px;
+        margin-bottom: 32px;
+      }
+
+      .top-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px 22px;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          transform 0.15s,
+          background 0.2s;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .top-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          var(--accent-card, var(--accent)),
+          transparent
+        );
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      .top-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      .top-card:hover::after {
+        opacity: 0.06;
+      }
+
+      .top-card__icon {
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+      }
+
+      .top-card__label {
+        font-size: 0.78rem;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+
+      .top-card__value {
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+
+      .top-card__sub {
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+
+      .top-card--accent {
+        border-color: rgba(124, 106, 247, 0.3);
+      }
+
+      .top-card--accent .top-card__value {
+        color: var(--accent2);
+      }
+
+      /* ── Sections ── */
+      .section {
+        margin-bottom: 36px;
+      }
+
+      /* Recent searches */
+      .searches {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .search-tag {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background 0.15s;
+      }
+
+      .search-tag:hover {
+        border-color: var(--accent);
+        background: var(--surface2);
+      }
+
+      .search-tag .icon {
+        margin-right: 4px;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      /* Recommendations */
+      .rec-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 14px;
+      }
+
+      .rec-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        overflow: hidden;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          transform 0.15s;
+      }
+
+      .rec-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      .rec-card__img {
+        height: 120px;
+        background: linear-gradient(135deg, #1a1f35, #2a1f45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        position: relative;
+      }
+
+      .rec-card__tag {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(124, 106, 247, 0.8);
+        color: #fff;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        padding: 3px 8px;
+        border-radius: 6px;
+        text-transform: uppercase;
+      }
+
+      .rec-card__body {
+        padding: 14px 16px;
+      }
+
+      .rec-card__title {
+        font-size: 0.88rem;
+        font-weight: 600;
+        line-height: 1.4;
+        margin-bottom: 8px;
+      }
+
+      .rec-card__meta {
+        font-size: 0.73rem;
+        color: var(--muted);
+      }
+
+      /* Followed authors articles */
+      .articles-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .article-row {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        cursor: pointer;
+        transition: border-color 0.2s;
+      }
+
+      .article-row:hover {
+        border-color: var(--accent);
+      }
+
+      .article-row__avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+        border: 2px solid var(--border);
+      }
+
+      .article-row__body {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .article-row__author {
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+
+      .article-row__title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.4;
+        margin-bottom: 6px;
+      }
+
+      .article-row__meta {
+        display: flex;
+        gap: 14px;
+        font-size: 0.73rem;
+        color: var(--muted);
+      }
+
+      .article-row__status {
+        flex-shrink: 0;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      .status--published {
+        background: rgba(52, 211, 153, 0.12);
+        color: var(--green);
+      }
+
+      .status--premium {
+        background: rgba(251, 191, 36, 0.1);
+        color: var(--yellow);
+      }
+
+      /* Popular authors */
+      .authors-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 14px;
+      }
+
+      .author-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px 16px;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          transform 0.15s;
+      }
+
+      .author-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-2px);
+      }
+
+      .author-card__avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        margin: 0 auto 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border: 2px solid var(--border);
+      }
+
+      .author-card__name {
+        font-size: 0.88rem;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .author-card__articles {
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-bottom: 12px;
+      }
+
+      .btn-follow {
+        width: 100%;
+        padding: 7px;
+        border-radius: 8px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        border: 1px solid var(--accent);
+        background: transparent;
+        color: var(--accent2);
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+
+      .btn-follow:hover {
+        background: rgba(124, 106, 247, 0.15);
+      }
+
+      .btn-follow.following {
+        background: rgba(124, 106, 247, 0.15);
+        color: var(--accent2);
+        border-color: var(--accent);
+      }
+
+      /* Subscription info / offer panels */
+      .sub-info-panel,
+      .sub-offer-panel {
+        display: none;
+      }
+
+      .sub-info-panel.visible,
+      .sub-offer-panel.visible {
+        display: block;
+      }
+
+      .info-box {
+        background: var(--surface);
+        border: 1px solid rgba(52, 211, 153, 0.2);
+        border-radius: 16px;
+        padding: 24px 28px;
+      }
+
+      .info-box__title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--green);
+        margin-bottom: 16px;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.88rem;
+      }
+
+      .info-row:last-child {
+        border-bottom: none;
+      }
+
+      .info-row__label {
+        color: var(--muted);
+      }
+
+      .info-row__value {
+        font-weight: 600;
+      }
+
+      /* ── Responsive ── */
+      @media (max-width: 640px) {
+        .hero {
+          flex-direction: column;
+          text-align: center;
+        }
+
+        .hero__badges {
+          justify-content: center;
+        }
+
+        .hero__actions {
+          flex-direction: row;
+        }
+
+        .navbar {
+          padding: 0 16px;
+        }
+
+        .main {
+          padding: 20px 16px 60px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar__logo">spb<span>Vkurse</span></div>
+      <div class="navbar__right">
+        <a href="settings.html" class="navbar__back"><i></i>Настройки</a>
+        <div class="avatar-sm" id="navAvatar">М</div>
+      </div>
+    </nav>
+
+    <!-- Demo switcher -->
+    <div class="demo-bar">
+      <strong>Demo:</strong>
+      <span>Роль:</span>
+      <button class="demo-btn active" onclick="setRole('reader')">
+        Читатель
+      </button>
+      <button class="demo-btn" onclick="setRole('author')">Автор</button>
+      <span style="margin-left: 8px">Подписка:</span>
+      <button class="demo-btn active" id="btn-nosub" onclick="setSub(false)">
+        Нет
+      </button>
+      <button class="demo-btn" id="btn-sub" onclick="setSub(true)">
+        Активна
+      </button>
+    </div>
+
+    <main class="main">
+      <!-- Hero -->
+      <div class="hero">
+        <div class="hero__avatar" id="heroAvatar">М</div>
+        <div class="hero__info">
+          <div class="hero__name" id="heroName">Мерт Гюнеш</div>
+          <div class="hero__email" id="heroEmail">mert@example.com</div>
+          <div class="hero__badges">
+            <span class="badge badge--reader" id="badgeRole">Читатель</span>
+            <span class="badge badge--sub" id="badgeSub" style="display: none"
+              >Premium</span
+            >
+          </div>
+        </div>
+        <div class="hero__actions">
+          <button class="btn-outline" onclick="location.href = 'settings.html'">
+            ✏ Редактировать
+          </button>
+          <button class="btn-outline" onclick="location.href = 'inbox.html'">
+            ✉ Сообщения
+          </button>
+        </div>
+      </div>
+
+      <!-- Top cards -->
+      <div class="section">
+        <div class="section-title">Быстрый доступ</div>
+        <div class="top-cards" id="topCards">
+          <!-- Подписки -->
+          <a
+            class="top-card top-card--accent"
+            onclick="handleSubCard(event)"
+            href="#"
+          >
+            <div class="top-card__icon">💎</div>
+            <div class="top-card__label">Подписка</div>
+            <div class="top-card__value" id="subCardValue">Нет</div>
+            <div class="top-card__sub" id="subCardSub">
+              Нажмите, чтобы подписаться
+            </div>
+          </a>
+
+          <!-- Почта -->
+          <a class="top-card" href="inbox.html">
+            <div class="top-card__icon">✉️</div>
+            <div class="top-card__label">Входящие</div>
+            <div class="top-card__value">4</div>
+            <div class="top-card__sub">2 непрочитанных</div>
+          </a>
+
+          <!-- Статьи — только для автора -->
+          <a class="top-card" id="articlesCard" href="#" style="display: none">
+            <div class="top-card__icon">📝</div>
+            <div class="top-card__label">Мои статьи</div>
+            <div class="top-card__value">12</div>
+            <div class="top-card__sub">3 на модерации</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Subscription offer panel -->
+      <div class="section sub-offer-panel" id="subOfferPanel">
+        <div class="section-title">Оформить подписку</div>
+        <div
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+          "
+        >
+          <div class="top-card" style="cursor: default">
+            <div
+              style="font-size: 1.1rem; font-weight: 700; margin-bottom: 6px"
+            >
+              Ежемесячно
+            </div>
+            <div
+              style="font-size: 2rem; font-weight: 800; color: var(--accent2)"
+            >
+              299 ₽
+            </div>
+            <div
+              style="
+                font-size: 0.78rem;
+                color: var(--muted);
+                margin: 8px 0 16px;
+              "
+            >
+              в месяц · отмена в любое время
+            </div>
+            <button
+              class="btn-follow"
+              style="width: 100%"
+              onclick="activateSub()"
+            >
+              Оформить
+            </button>
+          </div>
+          <div class="top-card top-card--accent" style="cursor: default">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 6px;
+              "
+            >
+              <span style="font-size: 1.1rem; font-weight: 700">Ежегодно</span>
+              <span class="badge badge--sub">−20%</span>
+            </div>
+            <div
+              style="font-size: 2rem; font-weight: 800; color: var(--accent2)"
+            >
+              2 390 ₽
+            </div>
+            <div
+              style="
+                font-size: 0.78rem;
+                color: var(--muted);
+                margin: 8px 0 16px;
+              "
+            >
+              в год · 199 ₽/мес
+            </div>
+            <button
+              class="btn-follow"
+              style="width: 100%; background: rgba(124, 106, 247, 0.15)"
+              onclick="activateSub()"
+            >
+              Оформить
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subscription info panel -->
+      <div class="section sub-info-panel" id="subInfoPanel">
+        <div class="section-title">Информация о подписке</div>
+        <div class="info-box">
+          <div class="info-box__title">✅ Подписка активна</div>
+          <div class="info-row">
+            <span class="info-row__label">Тарифный план</span
+            ><span class="info-row__value">Ежегодный</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row__label">Статус</span
+            ><span class="info-row__value" style="color: var(--green)"
+              >active</span
+            >
+          </div>
+          <div class="info-row">
+            <span class="info-row__label">Дата начала</span
+            ><span class="info-row__value">01.01.2026</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row__label">Дата окончания</span
+            ><span class="info-row__value">01.01.2027</span>
+          </div>
+          <div class="info-row">
+            <span class="info-row__label">Автопродление</span
+            ><span class="info-row__value" style="color: var(--green)"
+              >Включено</span
+            >
+          </div>
+          <div class="info-row">
+            <span class="info-row__label">Способ оплаты</span
+            ><span class="info-row__value">Visa •••• 4242</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent searches + Recommendations -->
+      <div class="section">
+        <div class="section-title">Недавние поиски</div>
+        <div class="searches">
+          <div class="search-tag"><span class="icon">🔍</span>блокчейн</div>
+          <div class="search-tag">
+            <span class="icon">🔍</span>ИИ технологии
+          </div>
+          <div class="search-tag">
+            <span class="icon">🔍</span>экономика России
+          </div>
+          <div class="search-tag">
+            <span class="icon">🔍</span>стартапы 2026
+          </div>
+          <div class="search-tag"><span class="icon">🔍</span>криптовалюта</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Рекомендации на основе поисков</div>
+        <div class="rec-grid">
+          <div class="rec-card">
+            <div class="rec-card__img">
+              ⛓
+              <div class="rec-card__tag">Технологии</div>
+            </div>
+            <div class="rec-card__body">
+              <div class="rec-card__title">
+                Как блокчейн меняет финансовый сектор в 2026 году
+              </div>
+              <div class="rec-card__meta">Дмитрий Козлов · 5 мин</div>
+            </div>
+          </div>
+          <div class="rec-card">
+            <div class="rec-card__img">
+              🤖
+              <div class="rec-card__tag">ИИ</div>
+            </div>
+            <div class="rec-card__body">
+              <div class="rec-card__title">
+                GPT-5 и будущее автоматизации: чего ожидать
+              </div>
+              <div class="rec-card__meta">Анна Смирнова · 8 мин</div>
+            </div>
+          </div>
+          <div class="rec-card">
+            <div class="rec-card__img">
+              💹
+              <div class="rec-card__tag">Экономика</div>
+            </div>
+            <div class="rec-card__body">
+              <div class="rec-card__title">
+                Российские стартапы привлекли рекордные инвестиции
+              </div>
+              <div class="rec-card__meta">Иван Петров · 4 мин</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Articles from followed authors -->
+      <div class="section">
+        <div class="section-title">Статьи авторов, на которых вы подписаны</div>
+        <div class="articles-list">
+          <div class="article-row">
+            <div
+              class="article-row__avatar"
+              style="background: linear-gradient(135deg, #7c6af7, #ec4899)"
+            >
+              ДК
+            </div>
+            <div class="article-row__body">
+              <div class="article-row__author">Дмитрий Козлов · Вчера</div>
+              <div class="article-row__title">
+                Децентрализованные финансы: риски и возможности для инвесторов
+              </div>
+              <div class="article-row__meta">
+                <span>👁 3.2к</span><span>❤ 142</span><span>💬 38</span>
+              </div>
+            </div>
+            <span class="article-row__status status--published">published</span>
+          </div>
+          <div class="article-row">
+            <div
+              class="article-row__avatar"
+              style="background: linear-gradient(135deg, #f59e0b, #ef4444)"
+            >
+              АС
+            </div>
+            <div class="article-row__body">
+              <div class="article-row__author">Анна Смирнова · 2 дня назад</div>
+              <div class="article-row__title">
+                Нейросети в медицине: диагностика будущего уже сегодня
+              </div>
+              <div class="article-row__meta">
+                <span>👁 5.7к</span><span>❤ 289</span><span>💬 61</span>
+              </div>
+            </div>
+            <span class="article-row__status status--premium">premium</span>
+          </div>
+          <div class="article-row">
+            <div
+              class="article-row__avatar"
+              style="background: linear-gradient(135deg, #10b981, #3b82f6)"
+            >
+              МИ
+            </div>
+            <div class="article-row__body">
+              <div class="article-row__author">Мария Иванова · 3 дня назад</div>
+              <div class="article-row__title">
+                Крипторынок в первом квартале 2026: итоги и прогнозы
+              </div>
+              <div class="article-row__meta">
+                <span>👁 8.1к</span><span>❤ 401</span><span>💬 93</span>
+              </div>
+            </div>
+            <span class="article-row__status status--published">published</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Popular authors -->
+      <div class="section">
+        <div class="section-title">Популярные авторы</div>
+        <div class="authors-grid">
+          <div class="author-card">
+            <div
+              class="author-card__avatar"
+              style="background: linear-gradient(135deg, #7c6af7, #ec4899)"
+            >
+              ДК
+            </div>
+            <div class="author-card__name">Дмитрий Козлов</div>
+            <div class="author-card__articles">48 статей · 12к подписчиков</div>
+            <button class="btn-follow following" onclick="toggleFollow(this)">
+              ✓ Подписан
+            </button>
+          </div>
+          <div class="author-card">
+            <div
+              class="author-card__avatar"
+              style="background: linear-gradient(135deg, #f59e0b, #ef4444)"
+            >
+              АС
+            </div>
+            <div class="author-card__name">Анна Смирнова</div>
+            <div class="author-card__articles">
+              31 статья · 8.4к подписчиков
+            </div>
+            <button class="btn-follow following" onclick="toggleFollow(this)">
+              ✓ Подписан
+            </button>
+          </div>
+          <div class="author-card">
+            <div
+              class="author-card__avatar"
+              style="background: linear-gradient(135deg, #10b981, #3b82f6)"
+            >
+              МИ
+            </div>
+            <div class="author-card__name">Мария Иванова</div>
+            <div class="author-card__articles">
+              27 статей · 6.1к подписчиков
+            </div>
+            <button class="btn-follow" onclick="toggleFollow(this)">
+              + Подписаться
+            </button>
+          </div>
+          <div class="author-card">
+            <div
+              class="author-card__avatar"
+              style="background: linear-gradient(135deg, #06b6d4, #8b5cf6)"
+            >
+              ИП
+            </div>
+            <div class="author-card__name">Иван Петров</div>
+            <div class="author-card__articles">
+              19 статей · 4.8к подписчиков
+            </div>
+            <button class="btn-follow" onclick="toggleFollow(this)">
+              + Подписаться
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      let currentRole = "reader";
+      let hasSub = false;
+
+      function setRole(role) {
+        currentRole = role;
+        document.querySelectorAll(".demo-bar .demo-btn").forEach((b) => {
+          if (b.textContent === "Читатель" || b.textContent === "Автор")
+            b.classList.toggle(
+              "active",
+              b.textContent
+                .toLowerCase()
+                .includes(role === "reader" ? "чита" : "авт"),
+            );
+        });
+        document.getElementById("articlesCard").style.display =
+          role === "author" ? "block" : "none";
+        document.getElementById("badgeRole").textContent =
+          role === "author" ? "Автор" : "Читатель";
+        document.getElementById("badgeRole").className =
+          "badge " + (role === "author" ? "badge--author" : "badge--reader");
+      }
+
+      function setSub(active) {
+        hasSub = active;
+        document.getElementById("btn-sub").classList.toggle("active", active);
+        document
+          .getElementById("btn-nosub")
+          .classList.toggle("active", !active);
+        document.getElementById("badgeSub").style.display = active
+          ? "inline-block"
+          : "none";
+        document.getElementById("subCardValue").textContent = active
+          ? "Активна"
+          : "Нет";
+        document.getElementById("subCardSub").textContent = active
+          ? "Ежегодный план · до 01.01.2027"
+          : "Нажмите, чтобы подписаться";
+        document
+          .getElementById("subInfoPanel")
+          .classList.toggle("visible", active);
+        document.getElementById("subOfferPanel").classList.remove("visible");
+      }
+
+      function handleSubCard(e) {
+        e.preventDefault();
+        if (hasSub) {
+          document.getElementById("subInfoPanel").classList.add("visible");
+          document.getElementById("subOfferPanel").classList.remove("visible");
+        } else {
+          document.getElementById("subOfferPanel").classList.add("visible");
+          document.getElementById("subInfoPanel").classList.remove("visible");
+        }
+        document
+          .getElementById("subOfferPanel")
+          .scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function activateSub() {
+        setSub(true);
+        document.getElementById("subOfferPanel").classList.remove("visible");
+        document.getElementById("subInfoPanel").classList.add("visible");
+      }
+
+      function toggleFollow(btn) {
+        const following = btn.classList.contains("following");
+        btn.classList.toggle("following", !following);
+        btn.textContent = following ? "+ Подписаться" : "✓ Подписан";
+      }
+    </script>
+  </body>
+</html>

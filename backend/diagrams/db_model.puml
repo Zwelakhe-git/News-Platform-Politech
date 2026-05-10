@@ -1,0 +1,252 @@
+@startuml
+!define table(x) class x << (T,#FFAAAA) >>
+!define primary_key(x) <u>x</u>
+!define foreign_key(x) <i>x</i>
+
+title База данных новостной платформы
+
+' === Пользователи и роли ===
+table(users) {
+  + <u>id</u>: UUID [PK]
+  --
+  email: VARCHAR(255) [UNIQUE]
+  password_hash: VARCHAR(255)
+  full_name: VARCHAR(100)
+  avatar_url: TEXT
+  role: ENUM('reader', 'author', 'moderator', 'admin')
+  created_at: TIMESTAMP
+  updated_at: TIMESTAMP
+  last_login: TIMESTAMP
+  is_blocked: BOOLEAN [default: false]
+}
+
+table(subscriptions) {
+  + <u>id</u>: UUID [PK]
+  --
+  <i>user_id</i>: UUID [FK -> users.id]
+  plan: ENUM('monthly', 'yearly')
+  status: ENUM('active', 'expired', 'cancelled')
+  started_at: TIMESTAMP
+  expires_at: TIMESTAMP
+  auto_renew: BOOLEAN [default: true]
+  payment_method: VARCHAR(50)
+  created_at: TIMESTAMP
+}
+
+table(payments) {
+  + <u>id</u>: UUID [PK]
+  --
+  <i>user_id</i>: UUID [FK -> users.id]
+  <i>subscription_id</i>: UUID [FK -> subscriptions.id]
+  amount: DECIMAL(10,2)
+  currency: VARCHAR(3) [default: 'RUB']
+  status: ENUM('pending', 'succeeded', 'failed', 'refunded')
+  payment_gateway: VARCHAR(50)
+  gateway_payment_id: VARCHAR(255)
+  created_at: TIMESTAMP
+}
+
+' === Категории и теги ===
+table(categories) {
+  + <u>id</u>: INT [PK]
+  --
+  name: VARCHAR(50) [UNIQUE]
+  slug: VARCHAR(50) [UNIQUE]
+  description: TEXT
+  parent_id: INT [FK -> categories.id, NULL]
+  sort_order: INT
+  is_active: BOOLEAN [default: true]
+}
+
+table(tags) {
+  + <u>id</u>: INT [PK]
+  --
+  name: VARCHAR(50) [UNIQUE]
+  slug: VARCHAR(50) [UNIQUE]
+}
+
+' === Статьи (внутренние, от авторов) ===
+table(articles) {
+  + <u>id</u>: UUID [PK]
+  --
+  <i>author_id</i>: UUID [FK -> users.id]
+  <i>category_id</i>: INT [FK -> categories.id]
+  title: VARCHAR(255)
+  slug: VARCHAR(255) [UNIQUE]
+  content: TEXT
+  excerpt: TEXT
+  cover_image_url: TEXT
+  status: ENUM('draft', 'pending', 'published', 'rejected')
+  is_breaking: BOOLEAN [default: false]
+  is_premium: BOOLEAN [default: false]
+  views_count: INT [default: 0]
+  likes_count: INT [default: 0]
+  comments_count: INT [default: 0]
+  published_at: TIMESTAMP [NULL]
+  created_at: TIMESTAMP
+  updated_at: TIMESTAMP
+  moderated_by: UUID [FK -> users.id, NULL]
+  moderated_at: TIMESTAMP [NULL]
+  rejection_reason: TEXT [NULL]
+}
+
+table(article_tags) {
+  + <u>article_id</u>: UUID [FK -> articles.id]
+  + <u>tag_id</u>: INT [FK -> tags.id]
+}
+
+table(article_images) {
+  + <u>id</u>: UUID [PK]
+  --
+  <i>article_id</i>: UUID [FK -> articles.id]
+  image_url: TEXT
+  thumbnail_url: TEXT
+  caption: VARCHAR(255)
+  sort_order: INT
+}
+
+' === Внешние новости (из API) ===
+table(external_sources) {
+  + <u>id</u>: INT [PK]
+  --
+  name: VARCHAR(100)
+  base_url: VARCHAR(255)
+  api_key: VARCHAR(255) [ENCRYPTED]
+  update_interval_minutes: INT [default: 30]
+  is_active: BOOLEAN [default: true]
+  last_sync_at: TIMESTAMP
+}
+
+table(external_articles) {
+  + <u>id</u>: UUID [PK]
+  --
+  <i>source_id</i>: INT [FK -> external_sources.id]
+  <i>category_id</i>: INT [FK -> categories.id, NULL]
+  external_id: VARCHAR(255)
+  title: VARCHAR(255)
+  content: TEXT
+  url: TEXT
+  image_url: TEXT
+  published_at: TIMESTAMP
+  fetched_at: TIMESTAMP
+  author_name: VARCHAR(100)
+  title_hash: VARCHAR(64) [INDEX for deduplication]
+}
+
+' === Взаимодействие пользователей ===
+table(user_reading_history) {
+  + <u>id</u>: UUID [PK]
+  --
+  <i>user_id</i>: UUID [FK -> users.id]
+  <i>article_id</i>: UUID [FK -> articles.id, NULL]
+  <i>external_article_id</i>: UUID [FK -> external_articles.id, NULL]
+  read_at: TIMESTAMP
+  read_percent: INT [default: 0]
+  CONSTRAINT check_article_type CHECK (
+    (article_id IS NOT NULL AND external_article_id IS NULL) OR
+    (article_id IS NULL AND external_article_id IS NOT NULL)
+  )
+}
+
+table(user_likes) {
+  + <u>id</u>: UUID [PK]
+  --
+  <i>user_id</i>: UUID [FK -> users.id]
+  <i>article_id</i>: UUID [FK -> articles.id, NULL]
+  <i>external_article_id</i>: UUID [FK -> external_articles.id, NULL]
+  created_at: TIMESTAMP
+  CONSTRAINT check_like_type CHECK (
+    (article_id IS NOT NULL AND external_article_id IS NULL) OR
+    (article_id IS NULL AND external_article_id IS NOT NULL)
+  )
+}
+
+table(comments) {
+  + <u>id</u>: UUID [PK]
+  --
+  <i>user_id</i>: UUID [FK -> users.id]
+  <i>article_id</i>: UUID [FK -> articles.id, NULL]
+  <i>external_article_id</i>: UUID [FK -> external_articles.id, NULL]
+  <i>parent_id</i>: UUID [FK -> comments.id, NULL]
+  content: TEXT
+  status: ENUM('active', 'hidden', 'deleted')
+  created_at: TIMESTAMP
+  updated_at: TIMESTAMP
+  likes_count: INT [default: 0]
+  CONSTRAINT check_comment_type CHECK (
+    (article_id IS NOT NULL AND external_article_id IS NULL) OR
+    (article_id IS NULL AND external_article_id IS NOT NULL)
+  )
+}
+
+' === Подписки на авторов ===
+table(author_followers) {
+  + <u>id</u>: UUID [PK]
+  --
+  <i>follower_id</i>: UUID [FK -> users.id]
+  <i>author_id</i>: UUID [FK -> users.id]
+  created_at: TIMESTAMP
+  CONSTRAINT unique_follow UNIQUE(follower_id, author_id)
+  CONSTRAINT check_not_self CHECK (follower_id != author_id)
+}
+
+' === Уведомления ===
+table(notifications) {
+  + <u>id</u>: UUID [PK]
+  --
+  <i>user_id</i>: UUID [FK -> users.id]
+  type: ENUM('new_article', 'breaking_news', 'moderation_result', 'subscription_expiring', 'daily_digest')
+  title: VARCHAR(255)
+  content: TEXT
+  data: JSONB
+  is_read: BOOLEAN [default: false]
+  created_at: TIMESTAMP
+  sent_at: TIMESTAMP
+  channel: ENUM('in_app', 'push', 'email')
+}
+
+table(user_notification_settings) {
+  + <u>id</u>: UUID [PK]
+  --
+  <i>user_id</i>: UUID [FK -> users.id]
+  push_enabled: BOOLEAN [default: true]
+  email_enabled: BOOLEAN [default: true]
+  daily_digest: BOOLEAN [default: true]
+  notify_on_followed_authors: BOOLEAN [default: true]
+  notify_on_breaking: BOOLEAN [default: true]
+  updated_at: TIMESTAMP
+}
+
+' === Связи ===
+users ||--o{ subscriptions : "имеет"
+users ||--o{ payments : "совершает"
+subscriptions ||--o{ payments : "включает"
+
+users ||--o{ articles : "автор"
+categories ||--o{ articles : "категория"
+articles }o--o{ tags : "через article_tags"
+articles ||--o{ article_images : "содержит"
+
+external_sources ||--o{ external_articles : "предоставляет"
+categories ||--o{ external_articles : "категория (опционально)"
+
+users ||--o{ user_reading_history : "читает"
+articles ||--o{ user_reading_history : "читается"
+external_articles ||--o{ user_reading_history : "читается"
+
+users ||--o{ user_likes : "лайкает"
+articles ||--o{ user_likes : "лайкается"
+external_articles ||--o{ user_likes : "лайкается"
+
+users ||--o{ comments : "комментирует"
+articles ||--o{ comments : "комментируется"
+external_articles ||--o{ comments : "комментируется"
+comments ||--o{ comments : "ответы (parent_id)"
+
+users ||--o{ author_followers : "подписывается (follower)"
+users ||--o{ author_followers : "ведомый (author)"
+
+users ||--o{ notifications : "получает"
+users ||--o{ user_notification_settings : "настройки"
+
+@enduml
